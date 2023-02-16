@@ -1,6 +1,5 @@
 package com.example.fastcampusmysql.domain.member.repository;
 
-import com.example.fastcampusmysql.domain.member.entity.Member;
 import com.example.fastcampusmysql.domain.member.entity.MemberNicknameHistory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,10 +10,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +21,7 @@ public class JdbcMemberNicknameHistoryRepository implements MemberNicknameHistor
 
     private static final String TABLE = "MemberNicknameHistory";
 
-    public static final RowMapper<MemberNicknameHistory> rowMapper = (rs, rowNum) -> MemberNicknameHistory.builder()
+    public static final RowMapper<MemberNicknameHistory> ROW_MAPPER = (rs, rowNum) -> MemberNicknameHistory.builder()
             .id(rs.getLong("id"))
             .memberId(rs.getLong("memberId"))
             .nickname(rs.getString("nickname"))
@@ -34,7 +31,7 @@ public class JdbcMemberNicknameHistoryRepository implements MemberNicknameHistor
     public List<MemberNicknameHistory> findAllByMemberId(Long memberId) {
         String sql = String.format("SELECT * FROM %s WHERE memberId = :memberId", TABLE);
         MapSqlParameterSource param = new MapSqlParameterSource().addValue("memberId", memberId);
-        return namedJdbcTemplate.query(sql, param, rowMapper);
+        return namedJdbcTemplate.query(sql, param, ROW_MAPPER);
     }
 
     @Override
