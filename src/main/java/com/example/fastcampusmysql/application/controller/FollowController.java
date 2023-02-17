@@ -1,7 +1,7 @@
 package com.example.fastcampusmysql.application.controller;
 
-import com.example.fastcampusmysql.application.usacase.CreateFollowMemberUsaCase;
-import com.example.fastcampusmysql.application.usacase.GetFollowingMemberUsaCase;
+import com.example.fastcampusmysql.application.usecase.CreateFollowMemberUseCase;
+import com.example.fastcampusmysql.application.usecase.GetFollowingMemberUseCase;
 import com.example.fastcampusmysql.domain.member.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +13,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FollowController {
 
-    private final CreateFollowMemberUsaCase createFollowMemberUsaCase;
+    private final CreateFollowMemberUseCase createFollowMemberUsaCase;
 
-    private final GetFollowingMemberUsaCase getFollowingMemberUsaCase;
+    private final GetFollowingMemberUseCase getFollowingMemberUsaCase;
 
     @PostMapping("/{fromId}/{toId}")
     public void create(@PathVariable Long fromId, @PathVariable Long toId) {
