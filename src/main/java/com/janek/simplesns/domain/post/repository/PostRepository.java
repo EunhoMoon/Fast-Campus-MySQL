@@ -18,4 +18,8 @@ public interface PostRepository {
 
     public Page<Post> findAllByMemberId(Long memberId, Pageable pageable);
 
+    List<Post> findAllByMemberIdAndOrderByIdDesc(Long memberId, int size);
+
+    List<Post> findAllByLessThenIdAndMemberIdAndOrderByIdDesc(Long id, Long memberId, int size);
+
 }

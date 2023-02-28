@@ -1,4 +1,4 @@
-package com.janek.simplesns.domain;
+package com.janek.simplesns.util;
 
 import org.springframework.data.domain.Sort;
 

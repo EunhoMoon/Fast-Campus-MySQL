@@ -1,7 +1,5 @@
 package com.janek.simplesns.domain.post.repository;
 
-import com.janek.simplesns.domain.PageHelper;
-import com.janek.simplesns.domain.member.entity.Member;
 import com.janek.simplesns.domain.post.dto.DailyPostCountRequest;
 import com.janek.simplesns.domain.post.dto.DailyPostCountResponse;
 import com.janek.simplesns.domain.post.entity.Post;
@@ -9,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -23,7 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.janek.simplesns.domain.PageHelper.*;
+import static com.janek.simplesns.util.PageHelper.*;
 
 @Slf4j
 @Repository
@@ -104,6 +101,30 @@ public class JdbcPostRepository implements PostRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("memberId", memberId);
         return namedParameterJdbcTemplate.queryForObject(sql, params, Long.class);
+    }
+
+    public List<Post> findAllByMemberIdAndOrderByIdDesc(Long memberId, int size) {
+        String sql = String.format("""
+            SELECT * FROM %s WHERE memberId = :memberId 
+            ORDER BY id DESC LIMIT :size
+        """, TABLE);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("memberId", memberId)
+                .addValue("size", size);
+        return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
+    }
+
+    public List<Post> findAllByLessThenIdAndMemberIdAndOrderByIdDesc(Long id, Long memberId, int size) {
+        String sql = String.format("""
+            SELECT * FROM %s 
+            WHERE memberId = :memberId AND id < :id
+            ORDER BY id DESC LIMIT :size
+        """, TABLE);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("memberId", memberId)
+                .addValue("id", id)
+                .addValue("size", size);
+        return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
     }
 
     private Post insert(Post post) {
