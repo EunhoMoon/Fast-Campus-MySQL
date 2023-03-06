@@ -1,5 +1,6 @@
 package com.janek.simplesns.application.controller;
 
+import com.janek.simplesns.application.usecase.GetTimelinePostUseCase;
 import com.janek.simplesns.domain.post.dto.DailyPostCountRequest;
 import com.janek.simplesns.domain.post.dto.DailyPostCountResponse;
 import com.janek.simplesns.domain.post.dto.PostCommand;
@@ -11,8 +12,6 @@ import com.janek.simplesns.util.PageCursor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +26,8 @@ public class PostController {
     private final PostWriteService postWriteService;
 
     private final PostReadService postReadService;
+
+    private final GetTimelinePostUseCase timelinePostUseCase;
 
     @PostMapping("/")
     public Long create(PostCommand command) {
@@ -47,5 +48,11 @@ public class PostController {
     public PageCursor<Post> getPostsByCursor(@PathVariable Long memberId, CursorRequest request) {
         return postReadService.getPosts(memberId, request);
     }
+
+    @GetMapping("/members/{memberId}/timeline")
+    public PageCursor<Post> getTimeline(@PathVariable Long memberId, CursorRequest request) {
+        return timelinePostUseCase.execute(memberId, request);
+    }
+
 
 }

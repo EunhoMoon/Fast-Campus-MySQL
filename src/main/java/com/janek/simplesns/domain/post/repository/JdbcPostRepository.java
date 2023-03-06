@@ -104,12 +104,29 @@ public class JdbcPostRepository implements PostRepository {
     }
 
     public List<Post> findAllByMemberIdAndOrderByIdDesc(Long memberId, int size) {
+        // cursor key == null 일 때
         String sql = String.format("""
             SELECT * FROM %s WHERE memberId = :memberId 
             ORDER BY id DESC LIMIT :size
         """, TABLE);
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("memberId", memberId)
+                .addValue("size", size);
+        return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
+    }
+
+    public List<Post> findAllByMemberIdAndOrderByIdDesc(List<Long> memberIds, int size) {
+        // cursor key == null 일 때
+        if (memberIds.isEmpty()) {
+            return List.of();
+        }
+
+        String sql = String.format("""
+            SELECT * FROM %s WHERE memberId IN (:memberId) 
+            ORDER BY id DESC LIMIT :size
+        """, TABLE);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("memberId", memberIds)
                 .addValue("size", size);
         return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
     }
@@ -122,6 +139,23 @@ public class JdbcPostRepository implements PostRepository {
         """, TABLE);
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("memberId", memberId)
+                .addValue("id", id)
+                .addValue("size", size);
+        return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
+    }
+
+    public List<Post> findAllByLessThenIdAndMemberIdAndOrderByIdDesc(Long id, List<Long> memberIds, int size) {
+        if (memberIds.isEmpty()) {
+            return List.of();
+        }
+
+        String sql = String.format("""
+            SELECT * FROM %s 
+            WHERE memberId IN (:memberId) AND id < :id
+            ORDER BY id DESC LIMIT :size
+        """, TABLE);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("memberId", memberIds)
                 .addValue("id", id)
                 .addValue("size", size);
         return namedParameterJdbcTemplate.query(sql, params, ROW_MAPPER);
